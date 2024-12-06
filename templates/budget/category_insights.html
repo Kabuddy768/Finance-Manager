@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h1>{{ category.name }} Insights</h1>
+    <p>Total Budget: Ksh {{ category.budget|floatformat:2 }}</p>
+    <p>Total Spent: Ksh {{ total_spent|floatformat:2 }}</p>
+    <p>Remaining Budget: Ksh {{ remaining_budget|floatformat:2 }}</p>
+
+    <h3>Transactions</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Amount (Ksh)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.description }}</td>
+                <td>{{ transaction.amount|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

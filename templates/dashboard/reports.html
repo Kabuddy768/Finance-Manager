@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Financial Reports</h1>
+
+    <!-- Income vs Expenses Chart -->
+    <div class="mt-4">
+        <h3 class="text-center">Monthly Income vs Expenses</h3>
+        <canvas id="incomeExpensesChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Category Breakdown Chart -->
+    <div class="mt-4">
+        <h3 class="text-center">Expense Breakdown by Category</h3>
+        <canvas id="categoryBreakdownChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for Income vs Expenses Chart
+    const incomeExpensesData = {
+        labels: {{ income_expenses.keys|safe }},
+        datasets: [
+            {
+                label: 'Income',
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                data: {{ income_expenses.values|map(attribute='income')|safe }},
+            },
+            {
+                label: 'Expenses',
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                data: {{ income_expenses.values|map(attribute='expense')|safe }},
+            },
+        ],
+    };
+
+    const incomeExpensesConfig = {
+        type: 'bar',
+        data: incomeExpensesData,
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Month' } },
+                y: { title: { display: true, text: 'Amount (Ksh)' } },
+            },
+        },
+    };
+
+    const incomeExpensesChart = new Chart(
+        document.getElementById('incomeExpensesChart'),
+        incomeExpensesConfig
+    );
+
+    // Data for Category Breakdown Chart
+    const categoryData = {
+        labels: {{ category_data.values|map(attribute='category')|safe }},
+        datasets: [
+            {
+                label: 'Expenses',
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40',
+                ],
+                data: {{ category_data.values|map(attribute='total')|safe }},
+            },
+        ],
+    };
+
+    const categoryConfig = {
+        type: 'pie',
+        data: categoryData,
+        options: {
+            responsive: true,
+        },
+    };
+
+    const categoryBreakdownChart = new Chart(
+        document.getElementById('categoryBreakdownChart'),
+        categoryConfig
+    );
+</script>
+{% endblock %}

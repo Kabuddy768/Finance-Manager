@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Your Savings Goals</h1>
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Target Amount</th>
+                <th>Saved Amount</th>
+                <th>Progress</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goal in goals %}
+            <tr>
+                <td>{{ goal.name }}</td>
+                <td>Ksh {{ goal.target_amount }}</td>
+                <td>Ksh {{ goal.saved_amount }}</td>
+                <td>
+                    <div class="progress">
+                        <div class="progress-bar {% if goal.progress_percentage > 100 %}bg-danger{% else %}bg-success{% endif %}" 
+                             role="progressbar" 
+                             style="width: {{ goal.progress_percentage }}%;">
+                            {{ goal.progress_percentage|floatformat:1 }}%
+                        </div>
+                    </div>
+                </td>
+                <td>{{ goal.deadline }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

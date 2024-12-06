@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Profile - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Edit Profile</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Avatar Upload -->
+        <div class="mb-3">
+            <label for="id_avatar" class="form-label">Upload Avatar</label>
+            {% if user.profile.avatar %}
+            <div class="mb-2">
+                <img src="{{ user.profile.avatar.url }}" alt="Current Avatar" class="rounded-circle" width="100">
+            </div>
+            {% endif %}
+            {{ form.avatar }}
+        </div>
+        
+        <!-- Bio -->
+        <div class="mb-3">
+            <label for="id_bio" class="form-label">Bio</label>
+            {{ form.bio }}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'profile' user.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
