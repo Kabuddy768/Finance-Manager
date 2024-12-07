@@ -13,6 +13,7 @@ from django.db.models import Sum
 from datetime import datetime
 from .models import Category
 from .models import SavingsGoal
+from django.shortcuts import get_object_or_404
 
 
 # Create your views here.
@@ -89,9 +90,21 @@ def logout_view(request):
 # Dashboard view
 @login_required
 def dashboard_view(request):
+    if request.method == "POST":
+        form = TransactionForm(request.POST)
+        if form.is_valid():
+            transaction = form.save(commit=False)
+            transaction.user = request.user  # Set the user field
+            transaction.save()
+            messages.success(request, "Transaction added successfully!")
+            return redirect('dashboard')  # Redirect to the dashboard to reflect changes
+        else:
+            messages.error(request, "There was an error in your submission.")
+
+    # GET request logic
     transactions = Transaction.objects.filter(user=request.user).order_by('-date')
 
-    # Filter by query parameters
+    # Apply filters
     transaction_type = request.GET.get('transaction_type')
     category = request.GET.get('category')
     start_date = request.GET.get('start_date')
@@ -324,4 +337,27 @@ def add_savings_goal(request):
 @login_required
 def view_savings_goals(request):
     goals = SavingsGoal.objects.filter(user=request.user)
+    for goal in goals:
+        goal.progress_percentage = (goal.saved_amount / goal.target_amount) * 100 if goal.target_amount > 0 else 0
     return render(request, 'savings/view_savings_goals.html', {'goals': goals})
+
+
+@login_required
+def update_savings_goal(request, goal_id):
+    goal = get_object_or_404(SavingsGoal, id=goal_id, user=request.user)
+
+    if request.method == 'POST':
+        try:
+            saved_amount = float(request.POST.get('saved_amount', goal.saved_amount))
+            if saved_amount < 0:
+                messages.error(request, "Saved amount cannot be negative.")
+            else:
+                goal.saved_amount = saved_amount
+                goal.save()
+                messages.success(request, f"Saved amount for '{goal.name}' updated successfully!")
+        except ValueError:
+            messages.error(request, "Please enter a valid amount.")
+
+        return redirect('view_savings_goals')
+
+    return render(request, 'savings/update_savings_goal.html', {'goal': goal})

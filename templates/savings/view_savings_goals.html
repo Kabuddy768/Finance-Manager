@@ -12,6 +12,7 @@
                 <th>Saved Amount</th>
                 <th>Progress</th>
                 <th>Deadline</th>
+                <th>Actions</th>  {# New column #}
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,9 @@
                     </div>
                 </td>
                 <td>{{ goal.deadline }}</td>
+                <td>
+                    <a href="{% url 'update_savings_goal' goal_id=goal.id %}" class="btn btn-sm btn-primary">Update</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

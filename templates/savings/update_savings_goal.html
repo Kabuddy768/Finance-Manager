@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Update Savings Goal</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group mt-3">
+            <label for="saved_amount">Saved Amount (Ksh)</label>
+            <input type="number" class="form-control" id="saved_amount" name="saved_amount" 
+                   value="{{ goal.saved_amount }}" min="0" step="0.01" required>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success">Update</button>
+            <a href="{% url 'view_savings_goals' %}" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
